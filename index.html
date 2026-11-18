@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#12173a">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Marq-It Budget</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Marq-It">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+:root {
+  --bg: #12173a; --panel: #1b2147; --line: rgba(173, 184, 255, .18); --ink: #f3f4ff; --muted: #a7add3; --accent: #aebcff; --bad: #ff9d9d;
+  --foil: linear-gradient(118deg, #7fe0f2 0%, #a8b5fb 26%, #eeaaf8 50%, #f9d18f 74%, #7fe0f2 100%);
+}
+* { box-sizing: border-box; }
+html { background: var(--bg); -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; min-height: 100vh; min-height: 100dvh; color: var(--ink); font: 16px/1.45 -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Roboto, sans-serif;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: calc(28px + env(safe-area-inset-top)) 22px calc(28px + env(safe-area-inset-bottom));
+  background: radial-gradient(120% 70% at 18% 0%, #222a66 0%, rgba(18, 23, 58, 0) 62%), var(--bg);
+}
+main { width: 100%; max-width: 400px; min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; }
+.mark { width: 84px; height: 84px; border-radius: 21px; overflow: hidden; box-shadow: 0 16px 40px rgba(4, 7, 24, .6); }
+.mark svg { display: block; width: 100%; height: 100%; }
+h1 { margin: 0; font: 800 44px/0.95 "Avenir Next Condensed", "Roboto Condensed", "Arial Narrow", sans-serif; letter-spacing: .005em; }
+p { margin: 0; color: var(--muted); }
+main > * { min-width: 0; }
+.lead { font-size: 16.5px; max-width: 34ch; }
+form { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+label { font-weight: 650; font-size: 15px; }
+.field { display: flex; align-items: center; gap: 6px; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 4px 4px 4px 16px; }
+.field:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(174, 188, 255, .22); }
+.field input { flex: 1; width: 100%; min-width: 0; height: 48px; border: 0; outline: 0; background: transparent; color: var(--ink); font: 600 19px/1.2 -apple-system, system-ui, sans-serif; letter-spacing: .02em; }
+.show { border: 0; background: none; color: var(--accent); font-family: inherit; font-size: 15px; font-weight: 600; line-height: 1; padding: 14px 12px; border-radius: 12px; }
+.go { margin-top: 6px; min-height: 56px; border: 0; border-radius: 18px; background: var(--foil); color: #141a3c; font: 800 17.5px/1 -apple-system, system-ui, sans-serif; }
+.go[disabled] { opacity: .65; }
+.msg { min-height: 1.45em; font-size: 15px; color: var(--muted); }
+.msg.bad { color: var(--bad); }
+.install { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; padding: 16px 18px; border-radius: 18px; border: 1px solid var(--line); background: rgba(27, 33, 71, .72); }
+.install h2 { margin: 0; font-size: 17px; line-height: 1.3; }
+.install ol { margin: 0; padding-left: 22px; display: grid; gap: 6px; }
+.install li { color: var(--ink); }
+.install b { font-weight: 700; }
+.install .soft { font-size: 14px; }
+.ghost { justify-self: start; border: 0; background: none; color: var(--accent); font-family: inherit; font-size: 15px; font-weight: 600; line-height: 1.2; padding: 8px 0; }
+.opening { color: var(--muted); font-size: 16px; display: flex; align-items: center; gap: 10px; }
+.opening i { width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(174, 188, 255, .3); border-top-color: var(--accent); animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .opening i { animation: none; } }
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+[hidden] { display: none !important; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<main id="main" hidden>
+  <div class="mark" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="84" height="84">
+<defs>
+<radialGradient id="bg" cx="28%" cy="20%" r="95%"><stop offset="0" stop-color="#2b3378"/><stop offset=".55" stop-color="#171d4a"/><stop offset="1" stop-color="#10153a"/></radialGradient>
+<linearGradient id="foil" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#7fe0f2"/><stop offset=".38" stop-color="#a8b5fb"/><stop offset=".7" stop-color="#eeaaf8"/><stop offset="1" stop-color="#f9d18f"/></linearGradient>
+<mask id="cut"><rect width="512" height="512" fill="#fff"/><circle cx="280.0" cy="190.0" r="132.0" fill="#000"/></mask>
+</defs>
+<rect width="512" height="512" rx="0" fill="url(#bg)"/>
+<circle cx="218.0" cy="244.0" r="150.0" fill="#aebcff" mask="url(#cut)"/>
+<g><rect x="270.0" y="330.0" width="46.0" height="96.0" rx="12.0" fill="url(#foil)" stroke="#161c47" stroke-width="12.0" paint-order="stroke"/><rect x="332.0" y="274.0" width="46.0" height="152.0" rx="12.0" fill="url(#foil)" stroke="#161c47" stroke-width="12.0" paint-order="stroke"/><rect x="394.0" y="208.0" width="46.0" height="218.0" rx="12.0" fill="url(#foil)" stroke="#161c47" stroke-width="12.0" paint-order="stroke"/></g>
+<circle cx="130.0" cy="116.0" r="7.0" fill="#f3f4ff" opacity=".85"/>
+<circle cx="422.0" cy="122.0" r="5.0" fill="#f3f4ff" opacity=".6"/>
+<circle cx="368.0" cy="82.0" r="4.0" fill="#f3f4ff" opacity=".5"/>
+</svg></div>
+  <h1>Marq-It Budget</h1>
+  <p class="lead" id="lead">Enter your passcode to open your budget. You only do this once on each phone.</p>
+  <section class="install" id="install-ios" hidden aria-labelledby="ios-h">
+    <h2 id="ios-h">Put it on your Home Screen first</h2>
+    <ol>
+      <li>Tap <b>⋯</b> next to the address bar, then <b>Share</b>. On older iPhones, tap the <b>Share</b> button.</li>
+      <li>Scroll down and tap <b>Add to Home Screen</b>. Leave <b>Open as Web App</b> on, then tap <b>Add</b>.</li>
+      <li>Open <b>Marq-It</b> from your Home Screen and unlock it there.</li>
+    </ol>
+    <p class="soft">The Home Screen app keeps its own copy of your sorting, so there is no need to unlock it here in Safari.</p>
+    <button class="ghost" type="button" id="here">Unlock it in Safari anyway</button>
+  </section>
+  <section class="install" id="install-android" hidden aria-labelledby="and-h">
+    <h2 id="and-h">Put it on your Home Screen</h2>
+    <ol>
+      <li>Tap Chrome’s menu <b>⋮</b> at the top right.</li>
+      <li>Tap <b>Add to Home screen</b>, then <b>Install</b>.</li>
+      <li>Open <b>Marq-It</b> from your Home Screen.</li>
+    </ol>
+    <button class="go" type="button" id="install-btn" hidden>Install the app</button>
+  </section>
+  <form id="form" autocomplete="on">
+    <input class="vh" type="text" name="username" autocomplete="username" value="Marq-It" tabindex="-1" aria-hidden="true">
+    <label for="pass">Passcode</label>
+    <div class="field">
+      <input id="pass" name="password" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="go" required>
+      <button class="show" type="button" id="show" aria-pressed="false">Show</button>
+    </div>
+    <button class="go" type="submit" id="go">Unlock</button>
+    <p class="msg" id="msg" role="status" aria-live="polite"></p>
+  </form>
+</main>
+<p class="opening" id="opening"><i aria-hidden="true"></i>Opening your budget</p>
+<script>
+(function () {
+  'use strict';
+  var MAGIC = 'MBA1';
+  function $(id) { return document.getElementById(id); }
+  var ua = navigator.userAgent || '';
+  var ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var android = /Android/.test(ua);
+  var standalone = navigator.standalone === true || !!(window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
+
+  // ------------------------------------------------------------ the saved key (so the passcode is typed once)
+  function db() {
+    return new Promise(function (ok, no) {
+      var r = indexedDB.open('budget-lock', 1);
+      r.onupgradeneeded = function () { r.result.createObjectStore('k'); };
+      r.onsuccess = function () { ok(r.result); };
+      r.onerror = function () { no(r.error); };
+    });
+  }
+  function kv(mode, fn) {
+    return db().then(function (d) {
+      return new Promise(function (ok, no) {
+        var tx = d.transaction('k', mode), req = fn(tx.objectStore('k'));
+        tx.oncomplete = function () { ok(req && req.result); };
+        tx.onerror = tx.onabort = function () { no(tx.error); };
+      });
+    });
+  }
+  function getKey() { return kv('readonly', function (s) { return s.get('key'); }).catch(function () { return null; }); }
+  function putKey(rec) { return kv('readwrite', function (s) { return s.put(rec, 'key'); }); }
+  function dropKey() { return kv('readwrite', function (s) { return s.delete('key'); }).catch(function () {}); }
+
+  // ------------------------------------------------------------ the locked file
+  function norm(s) { return String(s || '').toLowerCase().replace(/[^a-z0-9]/g, ''); }
+  function hex(u) { var s = ''; for (var i = 0; i < u.length; i++) s += (u[i] < 16 ? '0' : '') + u[i].toString(16); return s; }
+  var blob = null;
+  function loadBlob() {
+    if (!blob) blob = fetch('app.enc', { cache: 'no-cache' }).then(function (r) {
+      if (!r.ok) throw { code: 'http' };
+      return r.arrayBuffer();
+    }).then(function (buf) {
+      var u = new Uint8Array(buf);
+      if (u.length < 40 || String.fromCharCode(u[0], u[1], u[2], u[3]) !== MAGIC) throw { code: 'format' };
+      return { iter: new DataView(buf).getUint32(4), salt: u.slice(8, 24), iv: u.slice(24, 36), ct: u.slice(36) };
+    }, function (e) { throw e && e.code ? e : { code: 'offline' }; });
+    blob.catch(function () { blob = null; });
+    return blob;
+  }
+  function derive(pass, p, extractable) {
+    return crypto.subtle.importKey('raw', new TextEncoder().encode(norm(pass)), 'PBKDF2', false, ['deriveKey']).then(function (base) {
+      return crypto.subtle.deriveKey({ name: 'PBKDF2', salt: p.salt, iterations: p.iter, hash: 'SHA-256' }, base,
+        { name: 'AES-GCM', length: 256 }, !!extractable, ['decrypt']);
+    });
+  }
+  function unlock(p, key) {
+    return crypto.subtle.decrypt({ name: 'AES-GCM', iv: p.iv }, key, p.ct).then(function (plain) {
+      if (typeof DecompressionStream !== 'function') throw { code: 'old' };
+      return new Response(new Blob([plain]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
+    }, function () { throw { code: 'pass' }; }).then(function (t) { return JSON.parse(t); });
+  }
+  function keyFrom(rec) {
+    if (rec.key) return Promise.resolve(rec.key);
+    return crypto.subtle.importKey('raw', rec.raw, { name: 'AES-GCM' }, false, ['decrypt']);
+  }
+  function remember(key, pass, p) {
+    var salt = hex(p.salt);
+    return putKey({ key: key, salt: salt }).catch(function () {
+      // some browsers cannot store the key itself: keep its bytes instead
+      return derive(pass, p, true).then(function (k) { return crypto.subtle.exportKey('raw', k); })
+        .then(function (raw) { return putKey({ raw: raw, salt: salt }); });
+    }).catch(function () {});
+  }
+  function boot(app) {
+    window.__APP__ = { tx: app.tx, seed: app.seed, built: app.built, through: app.through, v: app.v };
+    document.open();
+    document.write(app.page);
+    document.close();
+  }
+
+  // ------------------------------------------------------------ screen
+  var msg = $('msg'), go = $('go'), pass = $('pass');
+  function say(text, bad) { msg.textContent = text || ''; msg.className = 'msg' + (bad ? ' bad' : ''); }
+  function why(e) {
+    var c = e && e.code;
+    if (c === 'pass') return 'That passcode did not work. Check the spelling and try again.';
+    if (c === 'offline' || c === 'http') return 'Can’t reach the internet. Connect once to load your budget, and after that it opens offline too.';
+    if (c === 'old') return 'This browser is too old to open the app. Update your phone’s software and try again.';
+    return 'Something went wrong opening the app. Close it and try again.';
+  }
+  function showForm(note, bad) {
+    $('opening').hidden = true;
+    $('main').hidden = false;
+    if (!standalone && ios) $('install-ios').hidden = false;
+    if (!standalone && android) $('install-android').hidden = false;
+    say(note, bad);
+  }
+  function busy(on) { go.disabled = on; go.textContent = on ? 'Unlocking' : 'Unlock'; }
+  $('show').addEventListener('click', function () {
+    var on = pass.type === 'password';
+    pass.type = on ? 'text' : 'password';
+    this.textContent = on ? 'Hide' : 'Show';
+    this.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+  $('here').addEventListener('click', function () { $('install-ios').hidden = true; pass.focus(); });
+  var deferred = null;
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault();
+    deferred = e;
+    $('install-btn').hidden = false;
+  });
+  $('install-btn').addEventListener('click', function () { if (deferred) { deferred.prompt(); deferred = null; this.hidden = true; } });
+  $('form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var typed = pass.value;
+    if (!norm(typed)) { say('Type your passcode first.', true); pass.focus(); return; }
+    if (!window.crypto || !crypto.subtle) { say(why({ code: 'old' }), true); return; }
+    busy(true);
+    say('Unlocking. This takes a second.');
+    loadBlob().then(function (p) {
+      return derive(typed, p, false).then(function (key) {
+        return unlock(p, key).then(function (app) {
+          return remember(key, typed, p).then(function () { boot(app); });
+        });
+      });
+    }).catch(function (err) { busy(false); say(why(err), true); if (err && err.code === 'pass') pass.select(); });
+  });
+
+  // ------------------------------------------------------------ start: open straight away when this phone has the key
+  getKey().then(function (rec) {
+    if (!rec || !window.crypto || !crypto.subtle) { showForm(); return; }
+    return loadBlob().then(function (p) {
+      if (rec.salt !== hex(p.salt)) { dropKey(); showForm('The app has a new passcode. Enter it to keep going.'); return; }
+      return keyFrom(rec).then(function (key) { return unlock(p, key); }).then(boot);
+    }).catch(function (err) {
+      if (err && err.code === 'pass') { dropKey(); showForm('Enter your passcode again to open the app.'); return; }
+      showForm(why(err), true);
+    });
+  });
+})();
+</script>
+</body>
+</html>
