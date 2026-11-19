@@ -1,6 +1,6 @@
 /* Keeps the budget app working offline. The page and the locked data come from the network first, so an update
    shows up the next time the app opens online; without a connection the saved copies open instead. */
-var VERSION = 'budget-20261119T102301Z';
+var VERSION = 'budget-20261119T140700Z';
 var SHELL = ['./', './manifest.webmanifest', './icons/icon-180.png', './icons/icon-192.png', './icons/icon-512.png',
   './icons/icon-maskable.png', './app.enc'];
 var FONTS = 'budget-fonts';
